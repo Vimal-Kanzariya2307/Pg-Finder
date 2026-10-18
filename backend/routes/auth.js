@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { randomBytes } from 'crypto';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
 
@@ -9,6 +10,16 @@ const signToken = (id) => {
   if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET not set');
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
 };
+
+const buildUserResponse = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  phone: user.phone,
+  favorites: user.favorites,
+  avatar: user.avatar,
+});
 
 // Register
 router.post('/register', async (req, res) => {
@@ -51,10 +62,50 @@ router.post('/login', async (req, res) => {
     const token = signToken(user._id);
     res.json({
       success: true, token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, favorites: user.favorites, avatar: user.avatar }
+      user: buildUserResponse(user)
     });
   } catch (err) {
     console.error('Login error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Google login
+router.post('/google', async (req, res) => {
+  try {
+    const { name, email, avatar } = req.body;
+    if (!email)
+      return res.status(400).json({ success: false, message: 'Email is required' });
+
+    const normalizedEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (user) {
+      if (!user.isActive) {
+        return res.status(403).json({ success: false, message: 'Account deactivated' });
+      }
+
+      user.name = name || user.name;
+      if (avatar) user.avatar = avatar;
+      await user.save();
+    } else {
+      user = await User.create({
+        name: name || normalizedEmail.split('@')[0],
+        email: normalizedEmail,
+        password: randomBytes(32).toString('hex'),
+        avatar: avatar || '',
+        role: 'student',
+      });
+    }
+
+    const token = signToken(user._id);
+    res.json({
+      success: true,
+      token,
+      user: buildUserResponse(user)
+    });
+  } catch (err) {
+    console.error('Google login error:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

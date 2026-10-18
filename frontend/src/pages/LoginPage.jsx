@@ -7,12 +7,22 @@ import useAuthStore from '../store/authStore';
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
-  const { login, loading } = useAuthStore();
+  const { login, loading, googleLogin } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await login(form.email, form.password);
+    if (result.success) {
+      if (result.role === 'admin') navigate('/admin');
+      else if (result.role === 'owner') navigate('/owner');
+      else navigate('/student');
+    }
+  };
+  const handleGoogleLogin = async (e) => {
+    e?.preventDefault();
+    const result = await googleLogin();
+
     if (result.success) {
       if (result.role === 'admin') navigate('/admin');
       else if (result.role === 'owner') navigate('/owner');
@@ -74,7 +84,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Demo accounts */}
+          {/* Demo accounts
           <div className="mb-6 p-4 rounded-xl glass-orange">
             <p className="text-xs text-orange-400 font-medium mb-2">Try demo accounts</p>
             <div className="grid grid-cols-3 gap-2">
@@ -90,7 +100,7 @@ export default function LoginPage() {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -98,7 +108,7 @@ export default function LoginPage() {
               <div className="relative">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  placeholder="you@example.com" required className="input-field pl-11" />
+                  placeholder="you@gmail.com" required className="input-field pl-11" />
               </div>
             </div>
 
@@ -123,6 +133,13 @@ export default function LoginPage() {
               ) : (
                 <>Sign In <ArrowRight size={18} /></>
               )}
+            </button>
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full bg-white text-black py-3 rounded-xl mt-4 font-semibold"
+            >
+              Continue with Google
             </button>
           </form>
 

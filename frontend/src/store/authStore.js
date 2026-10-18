@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { auth } from './firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const useAuthStore = create(
   persist(
@@ -23,6 +25,47 @@ const useAuthStore = create(
           toast.error(err.response?.data?.message || 'Could not sign you in. Please try again.');
           return { success: false };
         }
+      },
+
+      googleLogin: async () => {
+        set({ loading: true });
+
+        try {
+          const provider = new GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: 'select_account' });
+
+          const result = await signInWithPopup(auth, provider);
+
+          if (!result.user.email) {
+            throw new Error('Google account email was not returned');
+          }
+
+          const { data } = await api.post('/auth/google', {
+            name: result.user.displayName || 'User',
+            email: result.user.email,
+            avatar: result.user.photoURL || '',
+          });
+
+          set({
+            user: data.user,
+            token: data.token,
+            loading: false
+          });
+          api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+          toast.success(`Welcome ${data.user.name || 'User'}`);
+
+          return {
+            success: true,
+            role: data.user.role
+          };
+        } catch (err) {
+          set({ loading: false });
+
+          toast.error(err.response?.data?.message || err.message || 'Google sign in failed');
+
+          return { success: false };
+        }
+
       },
 
       register: async (userData) => {

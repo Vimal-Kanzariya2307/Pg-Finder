@@ -22,7 +22,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               {[Twitter, Instagram, Linkedin].map((Icon, i) => (
-                <a key={i} href="#" className="w-9 h-9 rounded-xl flex items-center justify-center glass hover:border-orange-500/30 transition-all duration-300 hover:text-orange-400 text-slate-400">
+                <a key={i} href="https://www.linkedin.com/in/vimal-kanzariya-46966637b/" className="w-9 h-9 rounded-xl flex items-center justify-center glass hover:border-orange-500/30 transition-all duration-300 hover:text-orange-400 text-slate-400">
                   <Icon size={15} />
                 </a>
               ))}
@@ -51,9 +51,9 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4 tracking-wide uppercase">Support</h4>
             <div className="space-y-3">
               {[
-                { icon: Mail, text: 'support@pgfinder.in' },
-                { icon: Phone, text: '+91 98765 43210' },
-                { icon: MapPin, text: 'Bangalore, India' },
+                { icon: Mail, text: 'vimalkanzariya2307@pgfinder.in' },
+                { icon: Phone, text: '+91 7778914714' },
+                { icon: MapPin, text: 'Gujrat, India' },
               ].map(({ icon: Icon, text }, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm text-slate-400">
                   <Icon size={14} className="text-orange-500 flex-shrink-0" />
