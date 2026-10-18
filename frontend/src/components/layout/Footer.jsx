@@ -51,7 +51,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4 tracking-wide uppercase">Support</h4>
             <div className="space-y-3">
               {[
-                { icon: Mail, text: 'vimalkanzariya2307@pgfinder.in' },
+                { icon: Mail, text: 'vimalkanzariya2307@gmail.com' },
                 { icon: Phone, text: '+91 7778914714' },
                 { icon: MapPin, text: 'Gujrat, India' },
               ].map(({ icon: Icon, text }, i) => (
