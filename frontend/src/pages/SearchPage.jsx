@@ -141,7 +141,7 @@ export default function SearchPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   <div>
                     <label className="block text-xs text-slate-400 mb-2 font-medium uppercase tracking-wider">Gender</label>
-                    <select value={filters.gender} onChange={e => handleFilterChange('gender', e.target.value)} className="select-field text-sm">
+                    <select value={filters.gender} onChange={e => handleFilterChange('gender', e.target.value)} className="select-field text-sm bg-[#171721] text-white border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 hover:border-orange-500/50 transition-all duration-200 [&>option]:bg-[#171721] [&>option]:text-white">
                       <option value="">Any</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
